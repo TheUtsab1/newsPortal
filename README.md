@@ -1,9 +1,3 @@
-# News Portal 
-Students working on this repo:
-
-Utsab Devkota
-Mandeep Rajbhandari 
-
 Welcome to the News Portal, a Django-based web application designed to deliver the latest news articles efficiently and elegantly. This README file will guide you through setting up, running, and using the project.
 Features
 
