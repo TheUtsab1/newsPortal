@@ -1,0 +1,99 @@
+{% extends 'layouts/base_plain.html' %} {% load static %} {% block content %}
+<style>
+  main {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+  }
+
+  #logo-img {
+    height: 11em;
+    width: 11em;
+    object-fit: scale-down;
+    object-position: center center;
+  }
+</style>
+<div class="d-flex flex-column w-100 justify-content-center align-items-center">
+  <div class="mb-2">
+    <center>
+      <img
+        src="{% static 'img/core-img/news-logo.png' %}"
+        alt="System Logo"
+        class="bg-gradient-light rounded-circle border-light border-2"
+        id="logo-img"
+      />
+    </center>
+  </div>
+  <h3 class="fw-bolder text-center mb-3">{{ XDBC }}</h3>
+  <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+    <div class="card card-default rounded-0 shadow">
+      <div class="card-header">
+        <h4 class="card-title"><b>Register</b></h4>
+      </div>
+      <div class="card-body">
+        <div class="container-fluid">
+          <form method="post" id="register-user" action=" {% url "register" %}">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+              <label for="username" class="control-label">Username</label>
+              <input
+                type="text"
+                class="form-control rounded-0"
+                name="username"
+                id="username"
+                required="required"
+              />
+            </div>
+            <div class="form-group mb-3">
+              <label for="email" class="control-label">Email</label>
+              <input
+                type="email"
+                class="form-control rounded-0"
+                name="email"
+                id="email"
+                required="required"
+              />
+            </div>
+            <div class="form-group mb-3">
+              <label for="password" class="control-label">Password</label>
+              <input
+                type="password"
+                class="form-control rounded-0"
+                name="password"
+                id="password"
+                required="required"
+              />
+            </div>
+            <div class="form-group mb-3">
+              <label for="confirm_password" class="control-label"
+                >Confirm Password</label
+              >
+              <input
+                type="password"
+                class="form-control rounded-0"
+                name="confirm_password"
+                id="confirm_password"
+                required="required"
+              />
+            </div>
+            <div class="form-group mb-3">
+              <div
+                class="d-flex w-100 justify-content-between align-items-center"
+              >
+                <button class="btn btn-sm rounded-0 btn-primary">
+                  Register
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %} {% block javascripts %}
+<script></script>
+{% endblock javascripts %}

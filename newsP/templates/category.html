@@ -1,0 +1,38 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <h1>{{ page_title }}</h1>
+    <h2>Posts in {{ category.name }}</h2>
+    {% if posts %}
+        {% for post in posts %}
+            <div class="post">
+                <h3>{{ post.title }}</h3>
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width: 300px; height: auto;">
+                {% endif %}
+                <p>{{ post.content|truncatewords:50 }}</p>
+                <a href="{% url 'view-post' post.id %}">Read More</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No posts available in this category.</p>
+    {% endif %}
+
+    <h2>Latest Posts</h2>
+    {% if latest %}
+        {% for post in latest %}
+            <div class="post">
+                <h3>{{ post.title }}</h3>
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width: 300px; height: auto;">
+                {% endif %}
+                <p>{{ post.content|truncatewords:50 }}</p>
+                <a href="{% url 'view-post' post.id %}">Read More</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No latest posts available.</p>
+    {% endif %}
+</div>
+{% endblock content %}

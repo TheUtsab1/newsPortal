@@ -1,0 +1,69 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <h1>{{ page_title }}</h1>
+    {% if post.image %}
+        <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width: 600px; height: auto; margin-bottom: 20px;">
+    {% endif %}
+    <h3>{{ post.title }}</h3>
+    <p>{{ post.content }}</p>
+
+    <h2>Comments</h2>
+    {% if comments %}
+        {% for comment in comments %}
+            <div class="comment mb-3 p-3 border rounded" style="background-color: #f8f9fa;">
+                <p><strong>{{ comment.user.username }}</strong> - <small>{{ comment.date_created|date:"F d, Y H:i" }}</small></p>
+                <p>{{ comment.content }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No comments yet.</p>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        <h2>Add a Comment</h2>
+        <form method="POST" id="comment-form">
+            {% csrf_token %}
+            <input type="hidden" name="post_id" value="{{ post.id }}">
+            <div class="form-group mb-3">
+                <label for="content" class="control-label">Comment:</label>
+                <textarea name="content" id="content" class="form-control" rows="4" required></textarea>
+            </div>
+            <input type="hidden" name="id" value="">
+            <button type="submit" class="btn btn-primary">Submit Comment</button>
+        </form>
+        <script>
+            $(function() {
+                $('#comment-form').submit(function(e) {
+                    e.preventDefault();
+                    var _this = $(this);
+                    $.ajax({
+                        headers: {"X-CSRFToken": $('[name=csrfmiddlewaretoken]').val()},
+                        url: "{% url 'save-comment' %}",
+                        data: new FormData(this),
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        method: 'POST',
+                        dataType: 'json',
+                        success: function(resp) {
+                            if (resp.status == 'success') {
+                                location.reload(); // Reload to show new comment
+                            } else {
+                                alert(resp.msg); // Show error message
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log("AJAX Error: ", status, error);
+                            alert("An error occurred. Please check the console for details. Status: " + status + ", Error: " + error);
+                        }
+                    });
+                });
+            });
+        </script>
+    {% else %}
+        <p>Please <a href="{% url 'login' %}">log in</a> to add a comment.</p>
+    {% endif %}
+</div>
+{% endblock content %}

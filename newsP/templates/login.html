@@ -1,0 +1,103 @@
+{% extends 'layouts/base_plain.html' %}
+{% load static %}
+{% block content %}
+<style>
+    main {
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: auto;
+    }
+    #logo-img {
+        height: 11em;
+        width: 11em;
+        object-fit: scale-down;
+        object-position: center center;
+    }
+</style>
+<div class="d-flex flex-column w-100 justify-content-center align-items-center">
+    <div class="mb-2">
+        <center>
+            <img src="{% static 'img/core-img/news-logo.png' %}" alt="System Logo" class="bg-gradient-light rounded-circle border-light border-2" id="logo-img">
+        </center>
+    </div>
+    <h3 class="fw-bolder text-center mb-3">{{ site_name }}</h3>
+    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+        <div class="card card-default rounded-0 shadow">
+            <div class="card-header">
+                <h4 class="card-title"><b>Login</b></h4>
+            </div>
+            <div class="card-body">
+                <div class="container-fluid">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} err-msg">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    <form method="POST" id="login-user">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label for="username" class="control-label">Username</label>
+                            <input type="text" class="form-control rounded-0" autofocus name="username" id="username" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="password" class="control-label">Password</label>
+                            <input type="password" class="form-control rounded-0" name="password" id="password" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <button type="submit" class="btn btn-sm rounded-0 btn-primary">Login</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(function() {
+        $('#login-user').submit(function(e) {
+            e.preventDefault();
+            var _this = $(this);
+            $('.err-msg').remove();
+            var el = $('<div>').addClass("alert alert-danger err-msg").hide();
+            if (_this[0].checkValidity() == false) {
+                _this[0].reportValidity();
+                return false;
+            }
+            $.ajax({
+                headers: {"X-CSRFToken": $('[name=csrfmiddlewaretoken]').val()},
+                url: "{% url 'login' %}",
+                data: new FormData(this),
+                cache: false,
+                contentType: false,
+                processData: false,
+                method: 'POST',
+                dataType: 'json',
+                error: function(err) {
+                    console.log(err);
+                    el.text("An error occurred. Please try again.").show('slow');
+                    _this.prepend(el);
+                },
+                success: function(resp) {
+                    if (resp.status == 'success') {
+                        window.location.href = "{% url 'home-page' %}";
+                    } else if (resp.status == 'failed' && resp.msg) {
+                        el.text(resp.msg).show('slow');
+                    } else {
+                        el.text("An error occurred. Please try again.").show('slow');
+                    }
+                    _this.prepend(el);
+                    $("html, body").scrollTop(0);
+                }
+            });
+        });
+    });
+</script>
+{% endblock javascripts %}
